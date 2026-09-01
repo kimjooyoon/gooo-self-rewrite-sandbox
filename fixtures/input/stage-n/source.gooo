@@ -1,0 +1,5 @@
+package demo
+namespace demo
+
+entity Greeting id "gooo://demo/greeting"
+activity Render(name:string) -> string

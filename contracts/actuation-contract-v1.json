@@ -1,0 +1,24 @@
+{
+  "schema": "gooo/self-rewrite-actuation-contract/v1",
+  "authority": "meta/self-rewrite-boundary.gooo",
+  "input": {
+    "kind": "immutable-compiler-input",
+    "candidate_kind": "typed-gooo-rewrite-candidate",
+    "fixture_kind": "fixed-corpus"
+  },
+  "generation_boundary": "N+1",
+  "allowed_ast_nodes": ["namespace", "entity", "activity", "rewrite_candidate", "typed_operation"],
+  "preconditions": ["immutable-input", "exact-source-binding", "candidate-is-typed"],
+  "postconditions": ["semantic-ir-canonical", "generated-go-executable", "terminal-evidence-carrying"],
+  "capabilities": ["input.read", "candidate.read", "caller-temp.write", "generated.execute"],
+  "forbidden_effects": ["input-repository.write", "upstream-repository.write"],
+  "acceptance": ["CLOSED", "UNKNOWN", "REFUTED"],
+  "precedence": ["REFUTED", "UNKNOWN", "CLOSED"],
+  "authority_boundary": {
+    "input_repository_writes": 0,
+    "automatic_commit": 0,
+    "automatic_push": 0,
+    "automatic_merge": 0,
+    "promotion_authority": false
+  }
+}

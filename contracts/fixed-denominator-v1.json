@@ -1,0 +1,14 @@
+{
+  "schema": "gooo/self-rewrite-fixed-denominator/v1",
+  "count": 6,
+  "unknown_fields": ["stage", "step", "reason", "unknown_class", "next_operation", "blocked_by"],
+  "precedence": ["REFUTED", "UNKNOWN", "CLOSED"],
+  "cases": [
+    {"id": "SEMANTICS_PRESERVING_CLOSED", "kind": "semantics-preserving", "expected": "CLOSED"},
+    {"id": "EXPLANATION_PRESERVING_CLOSED", "kind": "explanation-preserving", "expected": "CLOSED"},
+    {"id": "CHANGED_TERMINAL_REASON_REFUTED", "kind": "changed-terminal-reason", "expected": "REFUTED"},
+    {"id": "FORBIDDEN_EFFECT_REFUTED", "kind": "forbidden-effect", "expected": "REFUTED"},
+    {"id": "INCOMPLETE_BINDING_UNKNOWN", "kind": "incomplete-binding", "expected": "UNKNOWN"},
+    {"id": "BYTE_IDENTICAL_REPLAY_CLOSED", "kind": "byte-identical-replay", "expected": "CLOSED"}
+  ]
+}

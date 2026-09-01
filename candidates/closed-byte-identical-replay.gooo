@@ -1,0 +1,17 @@
+program gooo-self-rewrite-candidate v1
+candidate byte-identical-replay
+target_phase reflexive.self-rewrite.v1
+target_activity LowerSource
+rewrite noop
+precondition immutable-input
+precondition exact-source-binding
+postcondition semantic-ir-canonical
+postcondition generated-go-executable
+capability input.read
+capability candidate.read
+capability caller-temp.write
+capability generated.execute
+effect none
+boundary N+1
+accept CLOSED
+refute REFUTED

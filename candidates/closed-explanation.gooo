@@ -1,0 +1,17 @@
+program gooo-self-rewrite-candidate v1
+candidate explanation-preserving
+target_phase reflexive.self-rewrite.v1
+target_activity LowerSource
+rewrite replace-operation LowerSource SourceGraph SemanticIR "lower-source:v2;input=GOOO;normal_form=sort-by-stable-id;duplicate=REFUTED;missing=UNKNOWN;proof=explanation-equal"
+precondition immutable-input
+precondition exact-source-binding
+postcondition semantic-ir-canonical
+postcondition terminal-evidence-carrying
+capability input.read
+capability candidate.read
+capability caller-temp.write
+capability generated.execute
+effect none
+boundary N+1
+accept CLOSED
+refute REFUTED

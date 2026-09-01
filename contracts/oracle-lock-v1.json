@@ -1,0 +1,33 @@
+{
+  "schema": "gooo/self-rewrite-optional-oracle-lock/v1",
+  "required_cross_project_gates": 0,
+  "enabled_by_default": false,
+  "oracles": [
+    {
+      "name": "reflexive-compiler-slice",
+      "repository": "kimjooyoon/gooo-reflexive-compiler-slice",
+      "tag": "v0.3.0",
+      "immutable": true,
+      "tag_object": "d7e2bd301f5d1634e92b0de90d54798a35db424a",
+      "target_commit": "0cf44db8b0d6cd96d190e9f902312d0be9394029",
+      "release_id": 380150043,
+      "asset": {
+        "name": "gooo-reflexive-compiler-slice-source-v0.3.0.tar.gz",
+        "digest": "sha256:62c45b663084690ff0ad964991d9d7fda1c30ee361876f31fc4f10ef34b68dbc"
+      }
+    },
+    {
+      "name": "two-generation-bootstrap",
+      "repository": "kimjooyoon/gooo-two-generation-bootstrap",
+      "tag": "v0.1.1",
+      "immutable": true,
+      "tag_object": "8b89c283ece9ac7321858308366395946265400f",
+      "target_commit": "6d2bc764f144900862ba5e127cfa19d4cec248b9",
+      "release_id": 380148091,
+      "assets": [
+        {"name": "gooo-two-generation-release-v0.1.1-evidence.tar.gz", "digest": "sha256:66fed9217a3a632e412a00feae80b87ac66fbf9fd63d4ee6e147b8d6a059ae9c"},
+        {"name": "gooo-two-generation-release-v0.1.1-SHA256SUMS", "digest": "sha256:e28154200027dd298aa56dc5cc8c045f177c259a105166cfa8d8dce46e39ebc3"}
+      ]
+    }
+  ]
+}

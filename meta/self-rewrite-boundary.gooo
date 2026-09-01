@@ -1,0 +1,38 @@
+# The .gooo source is the semantic authority for this actuation boundary.
+program gooo-self-rewrite-sandbox v1
+namespace self_rewrite
+phase reflexive.self-rewrite.v1
+
+allowed_ast namespace
+allowed_ast entity
+allowed_ast activity
+allowed_ast rewrite_candidate
+allowed_ast typed_operation
+
+precondition immutable-input
+precondition exact-source-binding
+precondition candidate-is-typed
+postcondition semantic-ir-canonical
+postcondition generated-go-executable
+postcondition terminal-evidence-carrying
+
+capability input.read
+capability candidate.read
+capability caller-temp.write
+capability generated.execute
+forbidden_effect input-repository.write
+forbidden_effect upstream-repository.write
+
+boundary N+1
+accept CLOSED
+accept UNKNOWN
+accept REFUTED
+precedence REFUTED > UNKNOWN > CLOSED
+
+terminal_reason CLOSED "SEMANTIC_IR_CANONICAL"
+terminal_reason UNKNOWN "EVIDENCE_INCOMPLETE"
+terminal_reason REFUTED "COUNTEREXAMPLE_OBSERVED"
+
+activity LowerSource(SourceGraph) -> SemanticIR computes "lower-source:v1;input=GOOO;normal_form=sort-by-stable-id;duplicate=REFUTED;missing=UNKNOWN"
+activity EmitBackend(SemanticIR) -> GeneratedArtifact computes "backend-go:v1;authority=SOURCE_GOOO_GRAPH;artifact=BACKEND_ONLY"
+activity ExecuteGenerated(GeneratedArtifact) -> Evidence computes "execute-generated:v1;input=GENERATED_GO;compare=TERMINAL_RECORD"

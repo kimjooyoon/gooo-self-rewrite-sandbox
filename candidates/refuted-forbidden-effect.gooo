@@ -1,0 +1,16 @@
+program gooo-self-rewrite-candidate v1
+candidate forbidden-effect
+target_phase reflexive.self-rewrite.v1
+target_activity LowerSource
+rewrite noop
+precondition immutable-input
+precondition exact-source-binding
+postcondition semantic-ir-canonical
+capability input.read
+capability candidate.read
+capability caller-temp.write
+capability generated.execute
+effect input-repository.write
+boundary N+1
+accept CLOSED
+refute REFUTED

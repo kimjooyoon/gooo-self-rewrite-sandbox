@@ -1,0 +1,7 @@
+program gooo-self-rewrite-baseline v1
+namespace self_rewrite
+phase reflexive.self-rewrite.v1
+
+activity LowerSource(SourceGraph) -> SemanticIR computes "lower-source:v1;input=GOOO;normal_form=sort-by-stable-id;duplicate=REFUTED;missing=UNKNOWN"
+activity EmitBackend(SemanticIR) -> GeneratedArtifact computes "backend-go:v1;authority=SOURCE_GOOO_GRAPH;artifact=BACKEND_ONLY"
+activity ExecuteGenerated(GeneratedArtifact) -> Evidence computes "execute-generated:v1;input=GENERATED_GO;compare=TERMINAL_RECORD"

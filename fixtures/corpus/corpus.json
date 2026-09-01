@@ -1,0 +1,12 @@
+{
+  "schema": "gooo/self-rewrite-corpus/v1",
+  "unknown_fields": ["stage", "step", "reason", "unknown_class", "next_operation", "blocked_by"],
+  "cases": [
+    {"id": "SEMANTICS_PRESERVING_CLOSED", "candidate": "candidates/closed-semantics.gooo", "expected": "CLOSED", "kind": "semantics-preserving"},
+    {"id": "EXPLANATION_PRESERVING_CLOSED", "candidate": "candidates/closed-explanation.gooo", "expected": "CLOSED", "kind": "explanation-preserving"},
+    {"id": "CHANGED_TERMINAL_REASON_REFUTED", "candidate": "candidates/refuted-terminal-reason.gooo", "expected": "REFUTED", "kind": "changed-terminal-reason"},
+    {"id": "FORBIDDEN_EFFECT_REFUTED", "candidate": "candidates/refuted-forbidden-effect.gooo", "expected": "REFUTED", "kind": "forbidden-effect"},
+    {"id": "INCOMPLETE_BINDING_UNKNOWN", "candidate": "candidates/unknown-incomplete-binding.gooo", "expected": "UNKNOWN", "kind": "incomplete-binding"},
+    {"id": "BYTE_IDENTICAL_REPLAY_CLOSED", "candidate": "candidates/closed-byte-identical-replay.gooo", "expected": "CLOSED", "kind": "byte-identical-replay"}
+  ]
+}

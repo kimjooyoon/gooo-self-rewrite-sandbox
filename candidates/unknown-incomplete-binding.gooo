@@ -1,0 +1,16 @@
+program gooo-self-rewrite-candidate v1
+candidate incomplete-binding
+target_phase reflexive.missing-phase.v1
+target_activity MissingActivity
+rewrite noop
+precondition immutable-input
+precondition exact-source-binding
+postcondition semantic-ir-canonical
+capability input.read
+capability candidate.read
+capability caller-temp.write
+capability generated.execute
+effect none
+boundary N+1
+accept CLOSED
+refute REFUTED
