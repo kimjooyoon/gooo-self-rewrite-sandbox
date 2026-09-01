@@ -258,6 +258,18 @@ func runCase(paths resolvedOptions, meta model.Phase, baselinePhase model.Phase,
 		caseResult.Candidate = &candidateResult
 		caseResult.CandidateApplied = true
 		comparisonDecision, comparisonUnknowns, comparisonRefutations := compareStages(corpusCase.Kind, baseline, candidateResult)
+		if comparisonDecision == model.DecisionUnknown && len(comparisonUnknowns) == 0 {
+			comparisonUnknowns = append(comparisonUnknowns, model.Unknown{
+				Stage: "compare", Step: "compare-candidate", Reason: "COMPARISON_INCOMPLETE",
+				UnknownClass: "COMPARISON_INCOMPLETE", NextOperation: "capture-comparison-evidence",
+				BlockedBy: []string{"candidate-artifacts"},
+			})
+		}
+		if comparisonDecision == model.DecisionRefuted && len(comparisonRefutations) == 0 {
+			comparisonRefutations = append(comparisonRefutations, model.Refutation{
+				Stage: "compare", Step: "compare-candidate", Reason: "CANDIDATE_REFUTED", Counterexample: candidate.ID,
+			})
+		}
 		caseResult.Decision = model.Reduce(append(append([]model.Unknown{}, caseResult.Unknowns...), comparisonUnknowns...), append(append([]model.Refutation{}, caseResult.Refutations...), comparisonRefutations...))
 		caseResult.Unknowns = append(caseResult.Unknowns, comparisonUnknowns...)
 		caseResult.Refutations = append(caseResult.Refutations, comparisonRefutations...)
