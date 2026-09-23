@@ -64,3 +64,37 @@ unknown_candidate_field value
 		t.Fatal("unknown candidate declaration was accepted")
 	}
 }
+
+func TestLoadPhaseRejectsDuplicateHeader(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "phase.gooo")
+	data := `program gooo-self-rewrite-sandbox v1
+namespace self_rewrite
+phase reflexive.self-rewrite.v1
+phase reflexive.self-rewrite.v2
+activity LowerSource(SourceGraph) -> SemanticIR computes "lower-source:v1"
+`
+	if err := os.WriteFile(path, []byte(data), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := LoadPhase(path); err == nil {
+		t.Fatal("duplicate phase declaration was accepted")
+	}
+}
+
+func TestLoadCandidateRejectsDuplicateHeader(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "candidate.gooo")
+	data := `program gooo-self-rewrite-sandbox v1
+candidate candidate-one
+candidate candidate-two
+target_phase reflexive.self-rewrite.v1
+target_activity LowerSource
+boundary N+1
+rewrite noop
+`
+	if err := os.WriteFile(path, []byte(data), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := LoadCandidate(path); err == nil {
+		t.Fatal("duplicate candidate declaration was accepted")
+	}
+}

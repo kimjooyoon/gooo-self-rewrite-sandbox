@@ -63,13 +63,26 @@ func LoadPhase(path string) (model.Phase, error) {
 		Precedence: []string{}, TerminalReasons: map[string]string{}, Activities: []model.PhaseActivity{},
 		SourcePath: path, SourceDigest: digest,
 	}
+	seenProgram, seenNamespace, seenPhase, seenBoundary := false, false, false, false
 	if err := scanLines(data, func(line string, lineNumber int) error {
 		switch {
 		case strings.HasPrefix(line, "program "):
+			if seenProgram {
+				return fmt.Errorf("line %d: duplicate program declaration", lineNumber)
+			}
+			seenProgram = true
 			phase.Program = strings.TrimSpace(strings.TrimPrefix(line, "program "))
 		case strings.HasPrefix(line, "namespace "):
+			if seenNamespace {
+				return fmt.Errorf("line %d: duplicate namespace declaration", lineNumber)
+			}
+			seenNamespace = true
 			phase.Namespace = strings.TrimSpace(strings.TrimPrefix(line, "namespace "))
 		case strings.HasPrefix(line, "phase "):
+			if seenPhase {
+				return fmt.Errorf("line %d: duplicate phase declaration", lineNumber)
+			}
+			seenPhase = true
 			phase.ID = strings.TrimSpace(strings.TrimPrefix(line, "phase "))
 		case strings.HasPrefix(line, "allowed_ast "):
 			phase.AllowedASTNodes = append(phase.AllowedASTNodes, strings.TrimSpace(strings.TrimPrefix(line, "allowed_ast ")))
@@ -82,6 +95,10 @@ func LoadPhase(path string) (model.Phase, error) {
 		case strings.HasPrefix(line, "forbidden_effect "):
 			phase.ForbiddenEffects = append(phase.ForbiddenEffects, strings.TrimSpace(strings.TrimPrefix(line, "forbidden_effect ")))
 		case strings.HasPrefix(line, "boundary "):
+			if seenBoundary {
+				return fmt.Errorf("line %d: duplicate boundary declaration", lineNumber)
+			}
+			seenBoundary = true
 			phase.Generation = strings.TrimSpace(strings.TrimPrefix(line, "boundary "))
 		case strings.HasPrefix(line, "accept "):
 			phase.Acceptance = append(phase.Acceptance, strings.TrimSpace(strings.TrimPrefix(line, "accept ")))
@@ -91,6 +108,9 @@ func LoadPhase(path string) (model.Phase, error) {
 			decision, reason, ok := parseDecisionReason(strings.TrimSpace(strings.TrimPrefix(line, "terminal_reason ")))
 			if !ok {
 				return fmt.Errorf("line %d: invalid terminal_reason", lineNumber)
+			}
+			if _, exists := phase.TerminalReasons[decision]; exists {
+				return fmt.Errorf("line %d: duplicate terminal_reason for %s", lineNumber, decision)
 			}
 			phase.TerminalReasons[decision] = reason
 		case strings.HasPrefix(line, "activity "):
@@ -131,17 +151,38 @@ func LoadCandidate(path string) (model.Candidate, error) {
 		Effects: []string{}, Acceptance: []string{}, RefutationPolicy: []string{},
 		SourcePath: path, SourceDigest: digest,
 	}
+	seenProgram, seenCandidate, seenTargetPhase, seenTargetActivity, seenBoundary, seenRewrite := false, false, false, false, false, false
 	if err := scanLines(data, func(line string, lineNumber int) error {
 		switch {
 		case strings.HasPrefix(line, "program "):
+			if seenProgram {
+				return fmt.Errorf("line %d: duplicate program declaration", lineNumber)
+			}
+			seenProgram = true
 			candidate.Program = strings.TrimSpace(strings.TrimPrefix(line, "program "))
 		case strings.HasPrefix(line, "candidate "):
+			if seenCandidate {
+				return fmt.Errorf("line %d: duplicate candidate declaration", lineNumber)
+			}
+			seenCandidate = true
 			candidate.ID = strings.TrimSpace(strings.TrimPrefix(line, "candidate "))
 		case strings.HasPrefix(line, "target_phase "):
+			if seenTargetPhase {
+				return fmt.Errorf("line %d: duplicate target_phase declaration", lineNumber)
+			}
+			seenTargetPhase = true
 			candidate.TargetPhase = strings.TrimSpace(strings.TrimPrefix(line, "target_phase "))
 		case strings.HasPrefix(line, "target_activity "):
+			if seenTargetActivity {
+				return fmt.Errorf("line %d: duplicate target_activity declaration", lineNumber)
+			}
+			seenTargetActivity = true
 			candidate.TargetActivity = strings.TrimSpace(strings.TrimPrefix(line, "target_activity "))
 		case strings.HasPrefix(line, "rewrite "):
+			if seenRewrite {
+				return fmt.Errorf("line %d: duplicate rewrite declaration", lineNumber)
+			}
+			seenRewrite = true
 			rewrite, ok := parseRewrite(strings.TrimSpace(strings.TrimPrefix(line, "rewrite ")))
 			if !ok {
 				return fmt.Errorf("line %d: invalid rewrite", lineNumber)
@@ -156,6 +197,10 @@ func LoadCandidate(path string) (model.Candidate, error) {
 		case strings.HasPrefix(line, "effect "):
 			candidate.Effects = append(candidate.Effects, strings.TrimSpace(strings.TrimPrefix(line, "effect ")))
 		case strings.HasPrefix(line, "boundary "):
+			if seenBoundary {
+				return fmt.Errorf("line %d: duplicate boundary declaration", lineNumber)
+			}
+			seenBoundary = true
 			candidate.Generation = strings.TrimSpace(strings.TrimPrefix(line, "boundary "))
 		case strings.HasPrefix(line, "accept "):
 			candidate.Acceptance = append(candidate.Acceptance, strings.TrimSpace(strings.TrimPrefix(line, "accept ")))
