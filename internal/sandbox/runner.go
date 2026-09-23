@@ -40,6 +40,12 @@ func Run(options Options) (model.Report, error) {
 	if err != nil {
 		return model.Report{}, err
 	}
+	if err := ensureInside(paths.InputRoot, paths.PhasePath); err != nil {
+		return model.Report{}, err
+	}
+	if err := ensureInside(paths.InputRoot, paths.SourcePath); err != nil {
+		return model.Report{}, err
+	}
 	meta, err := gooo.LoadPhase(paths.MetaPath)
 	if err != nil {
 		return model.Report{}, fmt.Errorf("load meta phase: %w", err)
@@ -57,12 +63,6 @@ func Run(options Options) (model.Report, error) {
 		return model.Report{}, fmt.Errorf("decode corpus: %w", err)
 	}
 	if err := validateCorpus(corpus); err != nil {
-		return model.Report{}, err
-	}
-	if err := ensureInside(paths.InputRoot, paths.PhasePath); err != nil {
-		return model.Report{}, err
-	}
-	if err := ensureInside(paths.InputRoot, paths.SourcePath); err != nil {
 		return model.Report{}, err
 	}
 	if err := ensureOutside(paths.InputRoot, paths.WorkDir); err != nil {
@@ -559,7 +559,15 @@ func contains(values []string, value string) bool {
 }
 
 func ensureInside(root, path string) error {
-	relative, err := filepath.Rel(root, path)
+	resolvedRoot, err := filepath.EvalSymlinks(root)
+	if err != nil {
+		return err
+	}
+	resolvedPath, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		return err
+	}
+	relative, err := filepath.Rel(resolvedRoot, resolvedPath)
 	if err != nil {
 		return err
 	}
