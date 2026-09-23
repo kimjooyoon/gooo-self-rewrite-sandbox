@@ -3,6 +3,7 @@ package gooo
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -10,6 +11,26 @@ func TestTypedRewriteParsing(t *testing.T) {
 	value, ok := parseRewrite(`replace-operation LowerSource SourceGraph SemanticIR "lower-source:v2"`)
 	if !ok || value.Kind != "replace-operation" || value.Name != "LowerSource" || value.InputType != "SourceGraph" || value.OutputType != "SemanticIR" || value.Program != "lower-source:v2" {
 		t.Fatalf("unexpected typed rewrite: %#v, %v", value, ok)
+	}
+}
+
+func TestLoadPhaseRejectsDuplicateTerminalReason(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "phase.gooo")
+	source := strings.Join([]string{
+		"program test",
+		"namespace test",
+		"phase plan",
+		"activity A(Input) -> Output computes \"noop\"",
+		"terminal_reason CLOSED \"first\"",
+		"terminal_reason CLOSED \"second\"",
+	}, "\n") + "\n"
+	if err := os.WriteFile(path, []byte(source), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	if _, err := LoadPhase(path); err == nil || !strings.Contains(err.Error(), "duplicate terminal_reason") {
+		t.Fatalf("expected duplicate terminal_reason error, got %v", err)
 	}
 }
 

@@ -92,6 +92,9 @@ func LoadPhase(path string) (model.Phase, error) {
 			if !ok {
 				return fmt.Errorf("line %d: invalid terminal_reason", lineNumber)
 			}
+			if _, exists := phase.TerminalReasons[decision]; exists {
+				return fmt.Errorf("line %d: duplicate terminal_reason %s", lineNumber, decision)
+			}
 			phase.TerminalReasons[decision] = reason
 		case strings.HasPrefix(line, "activity "):
 			activity, ok := parsePhaseActivity(line)
