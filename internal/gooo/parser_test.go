@@ -30,3 +30,37 @@ func TestSnapshotDirIsStable(t *testing.T) {
 		t.Fatalf("snapshot changed: %s/%#v vs %s/%#v", firstDigest, first, secondDigest, second)
 	}
 }
+
+func TestLoadPhaseRejectsUnknownDeclaration(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "phase.gooo")
+	data := `program gooo-self-rewrite-sandbox v1
+namespace self_rewrite
+phase reflexive.self-rewrite.v1
+unknown_phase_field value
+activity LowerSource(SourceGraph) -> SemanticIR computes "lower-source:v1"
+`
+	if err := os.WriteFile(path, []byte(data), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := LoadPhase(path); err == nil {
+		t.Fatal("unknown phase declaration was accepted")
+	}
+}
+
+func TestLoadCandidateRejectsUnknownDeclaration(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "candidate.gooo")
+	data := `program gooo-self-rewrite-sandbox v1
+candidate candidate-one
+target_phase reflexive.self-rewrite.v1
+target_activity LowerSource
+boundary N+1
+rewrite noop
+unknown_candidate_field value
+`
+	if err := os.WriteFile(path, []byte(data), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := LoadCandidate(path); err == nil {
+		t.Fatal("unknown candidate declaration was accepted")
+	}
+}

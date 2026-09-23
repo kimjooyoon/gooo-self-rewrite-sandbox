@@ -99,6 +99,8 @@ func LoadPhase(path string) (model.Phase, error) {
 				return fmt.Errorf("line %d: invalid activity", lineNumber)
 			}
 			phase.Activities = append(phase.Activities, activity)
+		default:
+			return fmt.Errorf("line %d: unsupported phase declaration", lineNumber)
 		}
 		return nil
 	}); err != nil {
@@ -159,6 +161,8 @@ func LoadCandidate(path string) (model.Candidate, error) {
 			candidate.Acceptance = append(candidate.Acceptance, strings.TrimSpace(strings.TrimPrefix(line, "accept ")))
 		case strings.HasPrefix(line, "refute "):
 			candidate.RefutationPolicy = append(candidate.RefutationPolicy, strings.TrimSpace(strings.TrimPrefix(line, "refute ")))
+		default:
+			return fmt.Errorf("line %d: unsupported candidate declaration", lineNumber)
 		}
 		return nil
 	}); err != nil {
