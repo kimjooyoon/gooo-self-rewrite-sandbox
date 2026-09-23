@@ -63,6 +63,8 @@ func LoadPhase(path string) (model.Phase, error) {
 		Precedence: []string{}, TerminalReasons: map[string]string{}, Activities: []model.PhaseActivity{},
 		SourcePath: path, SourceDigest: digest,
 	}
+	seenTerminalReasons := map[string]bool{}
+	seenActivities := map[string]bool{}
 	if err := scanLines(data, func(line string, lineNumber int) error {
 		switch {
 		case strings.HasPrefix(line, "program "):
@@ -92,12 +94,20 @@ func LoadPhase(path string) (model.Phase, error) {
 			if !ok {
 				return fmt.Errorf("line %d: invalid terminal_reason", lineNumber)
 			}
+			if seenTerminalReasons[decision] {
+				return fmt.Errorf("line %d: duplicate terminal_reason %s", lineNumber, decision)
+			}
+			seenTerminalReasons[decision] = true
 			phase.TerminalReasons[decision] = reason
 		case strings.HasPrefix(line, "activity "):
 			activity, ok := parsePhaseActivity(line)
 			if !ok {
 				return fmt.Errorf("line %d: invalid activity", lineNumber)
 			}
+			if seenActivities[activity.Name] {
+				return fmt.Errorf("line %d: duplicate activity %s", lineNumber, activity.Name)
+			}
+			seenActivities[activity.Name] = true
 			phase.Activities = append(phase.Activities, activity)
 		}
 		return nil
