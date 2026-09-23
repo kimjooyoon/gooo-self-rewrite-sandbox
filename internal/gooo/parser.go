@@ -93,13 +93,15 @@ func LoadPhase(path string) (model.Phase, error) {
 				return fmt.Errorf("line %d: invalid terminal_reason", lineNumber)
 			}
 			phase.TerminalReasons[decision] = reason
-		case strings.HasPrefix(line, "activity "):
-			activity, ok := parsePhaseActivity(line)
-			if !ok {
-				return fmt.Errorf("line %d: invalid activity", lineNumber)
+			case strings.HasPrefix(line, "activity "):
+				activity, ok := parsePhaseActivity(line)
+				if !ok {
+					return fmt.Errorf("line %d: invalid activity", lineNumber)
+				}
+				phase.Activities = append(phase.Activities, activity)
+			default:
+				return fmt.Errorf("line %d: unsupported phase declaration", lineNumber)
 			}
-			phase.Activities = append(phase.Activities, activity)
-		}
 		return nil
 	}); err != nil {
 		return model.Phase{}, err
@@ -157,9 +159,11 @@ func LoadCandidate(path string) (model.Candidate, error) {
 			candidate.Generation = strings.TrimSpace(strings.TrimPrefix(line, "boundary "))
 		case strings.HasPrefix(line, "accept "):
 			candidate.Acceptance = append(candidate.Acceptance, strings.TrimSpace(strings.TrimPrefix(line, "accept ")))
-		case strings.HasPrefix(line, "refute "):
-			candidate.RefutationPolicy = append(candidate.RefutationPolicy, strings.TrimSpace(strings.TrimPrefix(line, "refute ")))
-		}
+			case strings.HasPrefix(line, "refute "):
+				candidate.RefutationPolicy = append(candidate.RefutationPolicy, strings.TrimSpace(strings.TrimPrefix(line, "refute ")))
+			default:
+				return fmt.Errorf("line %d: unsupported candidate declaration", lineNumber)
+			}
 		return nil
 	}); err != nil {
 		return model.Candidate{}, err
